@@ -1,3 +1,5 @@
+// components/navbar/navbar-item.tsx
+
 "use client";
 
 import Link from "next/link";
@@ -24,12 +26,12 @@ export default function NavbarItem({ item }: NavbarItemProps) {
     >
       <Icon
         size={22}
-        className={isActive ? "text-red-700" : "text-gray-600"}
+        className={isActive ? "text-(--color-primary)" : "text-(--color-subtext)"}
       />
 
       <span
         className={`text-xs leading-none ${
-          isActive ? "font-semibold text-red-700" : "text-gray-700"
+          isActive ? "font-semibold text-(--color-primary)" : "text-(--color-subtext)"
         }`}
       >
         {item.label}

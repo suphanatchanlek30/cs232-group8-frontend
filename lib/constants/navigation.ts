@@ -1,3 +1,5 @@
+// lib/constants/navigation.ts
+
 import {
   House,
   ClipboardList,

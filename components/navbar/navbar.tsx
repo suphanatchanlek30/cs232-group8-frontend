@@ -1,3 +1,5 @@
+// components/navbar/navbar.tsx
+
 "use client";
 
 import { NAV_ITEMS } from "@/lib/constants/navigation";
