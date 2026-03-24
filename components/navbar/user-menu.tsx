@@ -1,3 +1,5 @@
+// components/navbar/user-menu.tsx
+
 "use client";
 
 export default function UserMenu() {

@@ -1,3 +1,5 @@
+// components/home/hero.tsx
+
 export default function Hero() {
   return (
     <section className="bg-(--muted) px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-9">

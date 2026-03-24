@@ -1,3 +1,5 @@
+// components/navbar/navbar-item.tsx
+
 "use client";
 
 import Link from "next/link";

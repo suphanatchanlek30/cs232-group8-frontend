@@ -1,14 +1,15 @@
-import Hero from "@/components/home/hero";
-import ActionButtons from "@/components/home/action-buttons";
-import Category from "@/components/home/category";
+// app/page.tsx
+
+import { ActionButtons, Category, Hero, HowItWorks } from "@/components/home";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white">
       <div className="mx-auto w-full max-w-3xl">
-      <Hero />
-      <ActionButtons />
-      <Category />
+        <Hero />
+        <ActionButtons />
+        <Category />
+        <HowItWorks />
       </div>
     </div>
   );
