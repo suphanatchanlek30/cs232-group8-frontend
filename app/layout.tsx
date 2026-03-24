@@ -32,7 +32,7 @@ export default function RootLayout({
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-screen bg-white text-black">
-        <main className="pb-20">{children}</main>
+        <main>{children}</main>
         <Navbar />
       </body>
     </html>
