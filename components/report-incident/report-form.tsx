@@ -8,8 +8,7 @@ import PhotoUploadSection from "./photo-upload-section";
 import LocationSection from "./location-section";
 import IncidentTimeSection from "./incident-time-section";
 import ReportActions from "./report-actions";
-
-type IncidentTimeMode = "now" | "earlier";
+import type { IncidentTimeMode } from "./types";
 
 function getCurrentDatetimeLocal() {
   const now = new Date();

@@ -4,17 +4,7 @@
 
 import { MapPinned, Navigation } from "lucide-react";
 import { BUILDING_OPTIONS } from "@/lib/constants/building-options";
-
-interface LocationSectionProps {
-  building: string;
-  locationNote: string;
-  latitude: string;
-  longitude: string;
-  onChangeBuilding: (value: string) => void;
-  onChangeLocationNote: (value: string) => void;
-  onChangeLatitude: (value: string) => void;
-  onChangeLongitude: (value: string) => void;
-}
+import type { LocationSectionProps } from "./types";
 
 export default function LocationSection({
   building,
