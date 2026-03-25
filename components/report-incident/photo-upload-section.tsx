@@ -4,12 +4,7 @@
 
 import { ImagePlus, X } from "lucide-react";
 import { useMemo } from "react";
-
-interface PhotoUploadSectionProps {
-  photos: File[];
-  onAddPhotos: (files: FileList | null) => void;
-  onRemovePhoto: (index: number) => void;
-}
+import type { PhotoUploadSectionProps } from "./types";
 
 export default function PhotoUploadSection({
   photos,

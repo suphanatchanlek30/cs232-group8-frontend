@@ -4,34 +4,17 @@
 
 import { Mic, Square } from "lucide-react";
 import { useRef, useState } from "react";
-
-type SpeechRecognitionType = {
-  lang: string;
-  interimResults: boolean;
-  continuous: boolean;
-  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-  onerror: ((event: { error: string }) => void) | null;
-  onend: (() => void) | null;
-  start: () => void;
-  stop: () => void;
-};
-
-type SpeechRecognitionEventLike = {
-  results: ArrayLike<{
-    0: { transcript: string };
-  }>;
-};
+import type {
+  SpeechRecognitionType,
+  SpeechRecognitionEventLike,
+  DescriptionFieldProps,
+} from "./types";
 
 declare global {
   interface Window {
     SpeechRecognition?: new () => SpeechRecognitionType;
     webkitSpeechRecognition?: new () => SpeechRecognitionType;
   }
-}
-
-interface DescriptionFieldProps {
-  value: string;
-  onChange: (value: string) => void;
 }
 
 export default function DescriptionField({

@@ -1,9 +1,6 @@
 // components/report-incident/report-actions.tsx
 
-interface ReportActionsProps {
-  canSubmit: boolean;
-  onClear: () => void;
-}
+import type { ReportActionsProps } from "./types";
 
 export default function ReportActions({
   canSubmit,

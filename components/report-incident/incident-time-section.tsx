@@ -2,14 +2,7 @@
 
 "use client";
 
-type IncidentTimeMode = "now" | "earlier";
-
-interface IncidentTimeSectionProps {
-  incidentTimeMode: IncidentTimeMode;
-  incidentAt: string;
-  onChangeMode: (value: IncidentTimeMode) => void;
-  onChangeIncidentAt: (value: string) => void;
-}
+import type { IncidentTimeSectionProps, IncidentTimeMode } from "./types";
 
 export default function IncidentTimeSection({
   incidentTimeMode,
