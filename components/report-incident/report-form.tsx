@@ -9,6 +9,7 @@ import LocationSection from "./location-section";
 import IncidentTimeSection from "./incident-time-section";
 import ReportActions from "./report-actions";
 import SubmissionSuccess from "./submission-success";
+import ConfirmSubmitModal from "./confirm-submit-modal";
 import type { IncidentTimeMode } from "./types";
 
 function getCurrentDatetimeLocal() {
@@ -31,6 +32,7 @@ export default function ReportForm() {
   const [acknowledgeTruth, setAcknowledgeTruth] = useState(false);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [submittedData, setSubmittedData] = useState<any>(null);
 
   const handleAddPhotos = (files: FileList | null) => {
@@ -94,6 +96,12 @@ export default function ReportForm() {
     e.preventDefault();
 
     if (!canSubmit) return;
+
+    setShowConfirm(true);
+  };
+
+  const handleConfirmSubmit = () => {
+    setShowConfirm(false);
 
     const payload = {
       description,
@@ -208,6 +216,12 @@ export default function ReportForm() {
       </div>
 
       <ReportActions canSubmit={canSubmit} onClear={handleClear} />
+
+      <ConfirmSubmitModal
+        isOpen={showConfirm}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={handleConfirmSubmit}
+      />
     </form>
   );
 }

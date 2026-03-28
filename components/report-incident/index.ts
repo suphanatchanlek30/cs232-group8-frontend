@@ -12,3 +12,4 @@ export { default as ReportActions } from "./report-actions";
 export { default as ReportForm } from "./report-form";
 export { default as ReportHeader } from "./report-header";
 export { default as SubmissionSuccess } from "./submission-success";
+export { default as ConfirmSubmitModal } from "./confirm-submit-modal";
