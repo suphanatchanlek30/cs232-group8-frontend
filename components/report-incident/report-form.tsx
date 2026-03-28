@@ -8,6 +8,7 @@ import PhotoUploadSection from "./photo-upload-section";
 import LocationSection from "./location-section";
 import IncidentTimeSection from "./incident-time-section";
 import ReportActions from "./report-actions";
+import SubmissionSuccess from "./submission-success";
 import type { IncidentTimeMode } from "./types";
 
 function getCurrentDatetimeLocal() {
@@ -28,6 +29,9 @@ export default function ReportForm() {
     useState<IncidentTimeMode>("now");
   const [incidentAt, setIncidentAt] = useState(getCurrentDatetimeLocal());
   const [acknowledgeTruth, setAcknowledgeTruth] = useState(false);
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState<any>(null);
 
   const handleAddPhotos = (files: FileList | null) => {
     if (!files) return;
@@ -105,12 +109,46 @@ export default function ReportForm() {
     };
 
     console.log("submit payload", payload);
-    alert("Frontend form ผ่านแล้ว ต่อ API submit ได้เลย");
-    alert("ส่งรายงานเรียบร้อยแล้ว ✅");
 
-    // clear form after submit
-    handleClear();
+    // Extract Date from the actual incident time that user inputted
+    const incidentDateObj = incidentTimeMode === "now" ? new Date() : new Date(incidentAt);
+    const day = incidentDateObj.getDate().toString().padStart(2, '0');
+    const month = (incidentDateObj.getMonth() + 1).toString().padStart(2, '0');
+    const year = incidentDateObj.getFullYear();
+    const h = incidentDateObj.getHours().toString().padStart(2, '0');
+    const m = incidentDateObj.getMinutes().toString().padStart(2, '0');
+    
+    // Split into specific date and time strings
+    const incidentDateStr = `${day}/${month}/${year}`;
+    const incidentTimeStr = `${h}:${m}`;
+
+    // Mock submitted data for the success screen
+    setSubmittedData({
+      reportId: `RP-${Math.floor(100000 + Math.random() * 900000)}`,
+      incidentDate: incidentDateStr,
+      incidentTime: incidentTimeStr,
+      location: building || "Unknown location",
+      summaryText: description,
+      incidentType: "Pending Classification",
+      severity: "Pending Assessment",
+      status: "Processing",
+      addedToExisting: "-",
+    });
+
+    setIsSubmitted(true);
   };
+
+  if (isSubmitted && submittedData) {
+    return (
+      <SubmissionSuccess
+        onReset={() => {
+          handleClear();
+          setIsSubmitted(false);
+        }}
+        reportData={submittedData}
+      />
+    );
+  }
 
   return (
     <form

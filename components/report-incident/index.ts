@@ -11,3 +11,4 @@ export { default as PhotoUploadSection } from "./photo-upload-section";
 export { default as ReportActions } from "./report-actions";
 export { default as ReportForm } from "./report-form";
 export { default as ReportHeader } from "./report-header";
+export { default as SubmissionSuccess } from "./submission-success";
