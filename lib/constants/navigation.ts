@@ -23,6 +23,16 @@ export function shouldShowNavbar(pathname: string): boolean {
   );
 }
 
+export const DASHBOARD_CHROME_HIDDEN_PATHS = [
+  "/staff-portal-auth",
+] as const;
+
+export function shouldShowDashboardChrome(pathname: string): boolean {
+  return !DASHBOARD_CHROME_HIDDEN_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+}
+
 export const NAV_ITEMS = [
   {
     label: "Home",

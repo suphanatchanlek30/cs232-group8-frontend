@@ -5,4 +5,5 @@ export * from "./dashboard-sidebar";
 export * from "./dashboard-logo";
 export * from "./dashboard-config";
 export * from "./dashboard-icons";
+export * from "./dashboard-layout-shell";
 export * from "./types";
