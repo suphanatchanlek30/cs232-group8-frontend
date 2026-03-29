@@ -1,4 +1,7 @@
+// components/track-status/track-search.tsx
+
 import React, { useState } from "react";
+import { SearchIcon } from "./icons";
 
 interface SearchBarProps {
   onSearch?: (id: string) => void;
@@ -20,66 +23,26 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.inputContainer}>
+    <div className="bg-white px-4 py-3">
+      <div className="flex items-center rounded-3xl border border-[#ddd] bg-white px-3.5 py-2">
         <input
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          style={styles.input}
+          className="flex-1 border-none bg-transparent text-[14px] text-[#333] outline-none"
         />
-        <button onClick={handleSearch} style={styles.iconButton} aria-label="Search">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#888"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+        <button
+          onClick={handleSearch}
+          className="flex cursor-pointer items-center border-none bg-transparent p-0"
+          aria-label="Search"
+        >
+          <SearchIcon />
         </button>
       </div>
     </div>
   );
-};
-
-const styles: Record<string, React.CSSProperties> = {
-  wrapper: {
-    padding: "12px 16px",
-    backgroundColor: "#fff",
-  },
-  inputContainer: {
-    display: "flex",
-    alignItems: "center",
-    border: "1px solid #ddd",
-    borderRadius: "24px",
-    padding: "8px 14px",
-    backgroundColor: "#fff",
-  },
-  input: {
-    flex: 1,
-    border: "none",
-    outline: "none",
-    fontSize: "14px",
-    color: "#333",
-    backgroundColor: "transparent",
-  },
-  iconButton: {
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    padding: "0",
-    display: "flex",
-    alignItems: "center",
-  },
 };
 
 export default SearchBar;

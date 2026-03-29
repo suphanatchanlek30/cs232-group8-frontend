@@ -1,4 +1,7 @@
+// components/track-status/related-reports.tsx
+
 import React, { useState } from "react";
+import { ChevronDownIcon } from "./icons";
 
 interface RelatedReport {
   id: string;
@@ -25,7 +28,7 @@ const defaultSections = [
 
 const RelatedReports: React.FC<RelatedReportsProps> = ({ sections = defaultSections }) => {
   return (
-    <div style={styles.wrapper}>
+    <div className="mx-4 my-2 flex flex-col gap-2">
       {sections.map((section, idx) => (
         <CollapsibleSection key={idx} label={section.label} reports={section.reports} />
       ))}
@@ -40,35 +43,22 @@ const CollapsibleSection: React.FC<{ label: string; reports: RelatedReport[] }> 
   const [open, setOpen] = useState(false);
 
   return (
-    <div style={styles.card}>
-      <button style={styles.header} onClick={() => setOpen((o) => !o)}>
-        <span style={styles.headerText}>{label}</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#888"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 0.2s ease",
-          }}
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+    <div className="overflow-hidden rounded-[10px] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+      <button
+        className="flex w-full cursor-pointer items-center justify-between border-none bg-transparent px-4 py-3.5"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="text-[14px] font-semibold text-[#333]">{label}</span>
+        <ChevronDownIcon open={open} />
       </button>
 
       {open && (
-        <div style={styles.reportList}>
+        <div className="flex flex-col gap-2.5 border-t border-[#f0f0f0] px-4 py-2.5">
           {reports.map((report) => (
-            <div key={report.id} style={styles.reportItem}>
-              <div style={styles.reportId}>{report.id}</div>
-              {report.title && <div style={styles.reportTitle}>{report.title}</div>}
-              <div style={styles.reportMeta}>
+            <div key={report.id} className="border-b border-[#f5f5f5] pb-2">
+              <div className="text-[13px] font-semibold text-[#e05c2a]">{report.id}</div>
+              {report.title && <div className="mt-0.5 text-[13px] text-[#333]">{report.title}</div>}
+              <div className="mt-0.5 text-[12px] text-[#999]">
                 {report.submittedAt && <span>{report.submittedAt}</span>}
                 {report.location && <span> · {report.location}</span>}
               </div>
@@ -78,62 +68,6 @@ const CollapsibleSection: React.FC<{ label: string; reports: RelatedReport[] }> 
       )}
     </div>
   );
-};
-
-const styles: Record<string, React.CSSProperties> = {
-  wrapper: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    margin: "8px 16px",
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: "10px",
-    boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-    overflow: "hidden",
-  },
-  header: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "14px 16px",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-  },
-  headerText: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#333",
-  },
-  reportList: {
-    borderTop: "1px solid #f0f0f0",
-    padding: "10px 16px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-  },
-  reportItem: {
-    paddingBottom: "8px",
-    borderBottom: "1px solid #f5f5f5",
-  },
-  reportId: {
-    fontSize: "13px",
-    fontWeight: "600",
-    color: "#e05c2a",
-  },
-  reportTitle: {
-    fontSize: "13px",
-    color: "#333",
-    marginTop: "2px",
-  },
-  reportMeta: {
-    fontSize: "12px",
-    color: "#999",
-    marginTop: "2px",
-  },
 };
 
 export default RelatedReports;

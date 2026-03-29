@@ -1,3 +1,5 @@
+// components/track-status/report-lookup.tsx
+
 import React from "react";
 
 interface ReportLookupData {
@@ -22,24 +24,24 @@ const defaultData: ReportLookupData = {
 
 const ReportLookup: React.FC<ReportLookupProps> = ({ data = defaultData }) => {
   return (
-    <div style={styles.card}>
-      <p style={styles.sectionTitle}>REPORT LOOKUP</p>
-      <table style={styles.table}>
+    <div className="mx-4 my-2 rounded-[10px] bg-white px-4 py-3.5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+      <p className="mb-2.5 text-[12px] font-bold tracking-[0.5px] text-[#222]">REPORT LOOKUP</p>
+      <table className="w-full border-collapse">
         <tbody>
           <Row label="Report ID :">
-            <span style={styles.linkText}>{data.reportId}</span>
+            <span className="font-medium text-[#283DFF]">{data.reportId}</span>
           </Row>
           <Row label="Submission time :">
-            <span style={styles.normalText}>{data.submissionTime}</span>
+            <span className="text-[#333]">{data.submissionTime}</span>
           </Row>
           <Row label="Submitted location :">
-            <span style={styles.normalText}>{data.submittedLocation}</span>
+            <span className="text-[#333]">{data.submittedLocation}</span>
           </Row>
           <Row label="Linked incident ID :">
-            <span style={styles.linkText}>{data.linkedIncidentId}</span>
+            <span className="font-medium text-[#283DFF]">{data.linkedIncidentId}</span>
           </Row>
           <Row label="Merge result :">
-            <span style={styles.mergeText}>{data.mergeResult}</span>
+            <span className="font-semibold text-[#146F35]">{data.mergeResult}</span>
           </Row>
         </tbody>
       </table>
@@ -52,54 +54,9 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({
   children,
 }) => (
   <tr>
-    <td style={styles.labelCell}>{label}</td>
-    <td style={styles.valueCell}>{children}</td>
+    <td className="whitespace-nowrap pb-1.5 pr-2 align-middle text-[13px] text-[#555]">{label}</td>
+    <td className="pb-1.5 align-middle text-[13px]">{children}</td>
   </tr>
 );
-
-const styles: Record<string, React.CSSProperties> = {
-  card: {
-    backgroundColor: "#fff",
-    margin: "8px 16px",
-    borderRadius: "10px",
-    padding: "14px 16px",
-    boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-  },
-  sectionTitle: {
-    fontSize: "12px",
-    fontWeight: "700",
-    color: "#222",
-    marginBottom: "10px",
-    letterSpacing: "0.5px",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-  labelCell: {
-    fontSize: "13px",
-    color: "#555",
-    paddingBottom: "6px",
-    paddingRight: "8px",
-    whiteSpace: "nowrap",
-    verticalAlign: "middle",
-  },
-  valueCell: {
-    fontSize: "13px",
-    paddingBottom: "6px",
-    verticalAlign: "middle",
-  },
-  normalText: {
-    color: "#333",
-  },
-  linkText: {
-    color: "#283DFF",
-    fontWeight: "500",
-  },
-  mergeText: {
-    color: "#146F35",
-    fontWeight: "600",
-  },
-};
 
 export default ReportLookup;
