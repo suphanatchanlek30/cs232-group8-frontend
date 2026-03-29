@@ -1,3 +1,5 @@
+// components/report-incident/confirm-submit-modal.tsx
+
 import { AlertTriangle } from "lucide-react";
 
 interface ConfirmSubmitModalProps {
