@@ -53,5 +53,6 @@ export interface PhotoUploadSectionProps {
 
 export interface ReportActionsProps {
   canSubmit: boolean;
+  isSubmitting: boolean;
   onClear: () => void;
 }
