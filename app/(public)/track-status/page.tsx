@@ -48,6 +48,7 @@ const mapStatusToStep = (status: string | null): "Submitted" | "Analyzed" | "Rou
     SUBMITTED: "Submitted",
     NEW: "Submitted",
     IN_REVIEW: "Analyzed",
+    ROUTED: "Routed",
     IN_PROGRESS: "In progress",
     RESOLVED: "Resolved",
   };
@@ -57,12 +58,14 @@ const mapStatusToStep = (status: string | null): "Submitted" | "Analyzed" | "Rou
 const mapStatusLabel = (status: string | null): string => {
   if (!status) return "Submitted";
   const map: Record<string, string> = {
-    SUBMITTED: "Submitted",
-    NEW: "Submitted",
-    IN_REVIEW: "In Review",
-    IN_PROGRESS: "In Progress",
-    RESOLVED: "Resolved",
-    LINKED_TO_INCIDENT: "Merged",
+    SUBMITTED: "ใหม่ (รอกลั่นกรอง)",
+    NEW: "ใหม่ (รอตรวจสอบ)",
+    IN_REVIEW: "กำลังตรวจสอบ",
+    ROUTED: "ส่งต่อหน่วยงานแล้ว",
+    IN_PROGRESS: "กำลังดำเนินการ",
+    RESOLVED: "เสร็จสิ้น",
+    REJECTED: "ปฏิเสธ/ไม่เกี่ยวข้อง",
+    LINKED_TO_INCIDENT: "เชื่อมโยงเหตุการณ์แล้ว",
   };
   return map[status] || status;
 };

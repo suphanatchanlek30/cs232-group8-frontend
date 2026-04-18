@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { IncidentRow } from './types';
 
 interface IncidentsTableProps {
@@ -27,7 +28,7 @@ export function IncidentsTable({ incidents }: IncidentsTableProps) {
         <tbody className="divide-y divide-neutral-50">
           {incidents.map((incident) => (
             <tr key={incident.id} className="hover:bg-neutral-50/50 transition-colors group">
-              <td className="py-4 font-medium text-neutral-700">{incident.id}</td>
+              <td className="py-4 font-medium text-neutral-700">{incident.code}</td>
               <td className="py-4 text-neutral-900 font-medium">{incident.type}</td>
               <td className="py-4">
                 <span className={`font-semibold ${incident.severityColor}`}>{incident.severity}</span>
@@ -49,9 +50,12 @@ export function IncidentsTable({ incidents }: IncidentsTableProps) {
               <td className="py-4 text-neutral-400">{incident.latest}</td>
               <td className="py-4 text-right">
                 <div className="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button type="button" className="px-3 py-1 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors">
+                  <Link 
+                    href={`/incidents/${incident.id}`} 
+                    className="px-3 py-1 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors"
+                  >
                     View
-                  </button>
+                  </Link>
                   <button type="button" className="px-3 py-1 text-xs font-medium text-white bg-neutral-800 hover:bg-neutral-900 rounded-md transition-colors">
                     Resolve
                   </button>

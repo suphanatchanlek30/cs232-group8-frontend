@@ -8,6 +8,7 @@ type SubmitIncidentReportInput = {
   incidentDatetime: string;
   label: string;
   placeName: string;
+  locationNote?: string;
   images: File[];
 };
 
@@ -39,6 +40,9 @@ export async function submitIncidentReport(
   formData.append("occurredAt", input.incidentDatetime);
   formData.append("label", input.label);
   formData.append("locationName", input.placeName);
+  if (input.locationNote) {
+    formData.append("locationNote", input.locationNote);
+  }
 
   input.images.forEach((file) => {
     formData.append("images", file);

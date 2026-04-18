@@ -12,6 +12,7 @@ import SubmissionSuccess from "./submission-success";
 import ConfirmSubmitModal from "./confirm-submit-modal";
 import { submitIncidentReport } from "@/services/report-incident.service";
 import type { IncidentTimeMode } from "./types";
+import { BUILDING_OPTIONS } from "@/lib/constants/building-options";
 
 const INCIDENT_LABEL_OPTIONS = [
   { value: "trash", label: "Trash / Waste" },
@@ -137,13 +138,16 @@ export default function ReportForm() {
           ? new Date().toISOString()
           : new Date(incidentAt).toISOString();
 
+      const selectedBuildingLabel = BUILDING_OPTIONS.find(opt => opt.value === building)?.label || building;
+
       const apiResponse = await submitIncidentReport({
         description,
         latitude,
         longitude,
         incidentDatetime,
         label: incidentLabel,
-        placeName: locationNote.trim() || building,
+        placeName: selectedBuildingLabel,
+        locationNote: locationNote.trim(),
         images: photos,
       });
 

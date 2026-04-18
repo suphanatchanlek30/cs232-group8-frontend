@@ -29,7 +29,7 @@ staffApiClient.interceptors.request.use(
 staffApiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       clearStaffTokens();
       if (typeof window !== "undefined") {
         window.location.href = "/staff-portal-auth";

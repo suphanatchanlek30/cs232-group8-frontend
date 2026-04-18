@@ -65,17 +65,18 @@ export default function DashboardContent() {
       const incidentsData = await getIncidents({ pageSize: 50 });
       const mappedIncidents: IncidentRow[] = incidentsData.items.map((inc) => {
         let latestTime = "-";
-        if (inc.latestUpdatedAt) {
-          const d = new Date(inc.latestUpdatedAt);
+        if (inc.latestReportTime) {
+          const d = new Date(inc.latestReportTime);
           latestTime = `${d.getHours().toString().padStart(2, "0")}.${d.getMinutes().toString().padStart(2, "0")} น.`;
         }
 
         return {
-          id: inc.incidentCode || inc.incidentId.slice(0, 8),
+          id: inc.incidentId,
+          code: inc.incidentCode,
           type: inc.incidentType || "Unknown",
           severity: inc.severity || "LOW",
           severityColor: getSeverityColor(inc.severity),
-          confidence: "N/A", // Backend might not provide this directly in list
+          confidence: "N/A", 
           status: mapStatusLabel(inc.status),
           unit: inc.assignedUnitName || "Unassigned",
           reports: inc.reportCount ? `${inc.reportCount} reports` : "-",
@@ -89,7 +90,7 @@ export default function DashboardContent() {
       const highPriority = incidentsData.items
         .filter(inc => inc.severity === "HIGH" || inc.severity === "CRITICAL")
         .map(inc => ({
-          id: inc.incidentCode || inc.incidentId.slice(0, 8),
+          id: inc.incidentId,
           title: inc.incidentType || "Unknown",
           details: `${inc.assignedUnitName || "Unassigned"} · ${inc.reportCount || 0} reports`,
           severity: inc.severity || "HIGH",
