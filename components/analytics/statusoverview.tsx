@@ -12,7 +12,7 @@ const total = statusData.reduce((sum, item) => sum + item.value, 0);
 export default function StatusOverview() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 w-full max-w-md">
-      <h2 className="text-sm font-semibold text-gray-800 mb-4 tracking-wide">
+      <h2 className="text-sm font-bold text-gray-800 mb-4 tracking-wide">
         STATUS OVERVIEW
       </h2>
       <div className="space-y-3">
