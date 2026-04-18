@@ -1,4 +1,4 @@
-import axios from "axios";
+import apiClient from "@/services/http/axios-instance";
 
 const DEFAULT_UPLOAD_URL = "https://g7e3oj4z0d.execute-api.us-east-1.amazonaws.com/upload";
 
@@ -38,7 +38,7 @@ export async function submitIncidentReport(
     formData.append("images", file);
   });
 
-  const response = await axios.post<SubmitIncidentReportResponse>(
+  const response = await apiClient.post<SubmitIncidentReportResponse>(
     uploadUrl,
     formData,
     {
