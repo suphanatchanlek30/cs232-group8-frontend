@@ -106,17 +106,20 @@ export default function DashboardContent() {
   };
 
   const handleQuickResolve = async (id: string) => {
+    console.log("Resolving incident:", id);
     const summary = window.prompt("กรุณาระบุสรุปการแก้ไขเหตุการณ์ (Resolution Summary):", "ดำเนินการแก้ไขเรียบร้อยแล้ว");
+    
     if (summary === null) return; 
 
     try {
       setLoading(true);
-      await resolveIncident(id, summary);
+      const result = await resolveIncident(id, summary);
+      console.log("Resolve result:", result);
       alert("ปิดงานสำเร็จ!");
-      fetchData(); 
+      await fetchData(); // Force re-fetch
     } catch (error) {
       console.error("Failed to resolve incident:", error);
-      alert("เกิดข้อผิดพลาดในการปิดงาน");
+      alert("เกิดข้อผิดพลาดในการปิดงาน: " + (error instanceof Error ? error.message : "Unknown error"));
     } finally {
       setLoading(false);
     }
