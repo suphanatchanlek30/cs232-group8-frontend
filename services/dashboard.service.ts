@@ -46,7 +46,7 @@ export const getIncidents = async (params: {
   incidentType?: string;
   search?: string;
   sortBy?: string;
-  sortOrder?: string;
+  sortOrder?: "asc" | "desc";
 } = {}) => {
   const response = await staffApiClient.get<{ success: boolean; message: string; data: PaginatedIncidents }>(
     "/incidents",
@@ -54,3 +54,40 @@ export const getIncidents = async (params: {
   );
   return response.data.data;
 };
+
+export const getIncidentDetail = async (incidentId: string) => {
+  const response = await staffApiClient.get<{ success: boolean; message: string; data: IncidentItem }>(
+    `/incidents/${incidentId}`
+  );
+  return response.data.data;
+};
+
+export const getIncidentReports = async (incidentId: string, page = 1, pageSize = 20) => {
+  const response = await staffApiClient.get<{ success: boolean; message: string; data: PaginatedIncidents }>(
+    `/incidents/${incidentId}/reports`,
+    { params: { page, pageSize } }
+  );
+  return response.data.data;
+};
+
+export const getIncidentTimeline = async (incidentId: string) => {
+  const response = await staffApiClient.get<{ success: boolean; message: string; data: { timeline: { actionType: string; actorType: string; actorName: string | null; description: string; changedAt: string }[] } }>(
+    `/incidents/${incidentId}/timeline`
+  );
+  return response.data.data;
+};
+
+export const getFusionExplanation = async (incidentId: string) => {
+  const response = await staffApiClient.get<{ success: boolean; message: string; data: { explanationText: string; matchRules: { [key: string]: boolean | number | null }; mergedReports: number } }>(
+    `/incidents/${incidentId}/fusion-explanation`
+  );
+  return response.data.data;
+};
+
+export const getScoringExplanation = async (incidentId: string) => {
+  const response = await staffApiClient.get<{ success: boolean; message: string; data: { severity: string; confidence: string; incidentType: string; severityReason: string; confidenceFactors: { factor: string; score: number }[] } }>(
+    `/incidents/${incidentId}/scoring-explanation`
+  );
+  return response.data.data;
+};
+
