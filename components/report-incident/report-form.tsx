@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import DescriptionField from "./description-field";
 import PhotoUploadSection from "./photo-upload-section";
 import LocationSection from "./location-section";
@@ -12,14 +12,6 @@ import SubmissionSuccess from "./submission-success";
 import ConfirmSubmitModal from "./confirm-submit-modal";
 import { submitIncidentReport } from "@/services/report-incident.service";
 import type { IncidentTimeMode } from "./types";
-import { BUILDING_OPTIONS } from "@/lib/constants/building-options";
-
-const INCIDENT_LABEL_OPTIONS = [
-  { value: "trash", label: "Trash / Waste" },
-  { value: "safety", label: "Safety Hazard" },
-  { value: "infrastructure", label: "Infrastructure Damage" },
-  { value: "other", label: "Other" },
-];
 
 function getCurrentDatetimeLocal() {
   const now = new Date();
@@ -28,6 +20,8 @@ function getCurrentDatetimeLocal() {
   return local.toISOString().slice(0, 16);
 }
 
+import { getReportOptions, getPublicLocations } from "@/services/public.service";
+
 export default function ReportForm() {
   const [description, setDescription] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
@@ -35,7 +29,35 @@ export default function ReportForm() {
   const [locationNote, setLocationNote] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [incidentLabel, setIncidentLabel] = useState("trash");
+  const [incidentLabel, setIncidentLabel] = useState("");
+  
+  const [labelOptions, setLabelOptions] = useState<{value: string, label: string}[]>([]);
+  const [buildingOptions, setBuildingOptions] = useState<{value: string, label: string}[]>([]);
+
+  useEffect(() => {
+    async function loadOptions() {
+      try {
+        const [opts, locs] = await Promise.all([
+          getReportOptions(),
+          getPublicLocations()
+        ]);
+        
+        setLabelOptions(opts.incidentLabels.map(l => ({ value: l, label: l.replace('_', ' ').toUpperCase() })));
+        setBuildingOptions(locs.map(l => ({ value: l.buildingCode, label: l.locationName })));
+        
+        if (opts.incidentLabels.length > 0) setIncidentLabel(opts.incidentLabels[0]);
+      } catch (error) {
+        console.error("Failed to load report options", error);
+        // Fallback
+        setLabelOptions([
+          { value: "trash", label: "Trash / Waste" },
+          { value: "safety", label: "Safety Hazard" },
+        ]);
+      }
+    }
+    loadOptions();
+  }, []);
+
   const [incidentTimeMode, setIncidentTimeMode] =
     useState<IncidentTimeMode>("now");
   const [incidentAt, setIncidentAt] = useState(getCurrentDatetimeLocal());
@@ -138,7 +160,7 @@ export default function ReportForm() {
           ? new Date().toISOString()
           : new Date(incidentAt).toISOString();
 
-      const selectedBuildingLabel = BUILDING_OPTIONS.find(opt => opt.value === building)?.label || building;
+      const selectedBuildingLabel = buildingOptions.find(opt => opt.value === building)?.label || building;
 
       const apiResponse = await submitIncidentReport({
         description,
@@ -170,7 +192,7 @@ export default function ReportForm() {
         incidentTime: incidentTimeStr,
         location: locationNote.trim() || building || "Unknown location",
         summaryText: description,
-        incidentType: apiResponse.data?.candidateIncidentType || INCIDENT_LABEL_OPTIONS.find((option) => option.value === incidentLabel)?.label || incidentLabel,
+        incidentType: apiResponse.data?.candidateIncidentType || labelOptions.find((option) => option.value === incidentLabel)?.label || incidentLabel,
         severity: "Pending Assessment",
         status: apiResponse.data?.status || "Submitted",
         addedToExisting: apiResponse.data?.isMerged ? `Yes (${apiResponse.data?.incidentId})` : "No",
@@ -224,7 +246,7 @@ export default function ReportForm() {
           onChange={(e) => setIncidentLabel(e.target.value)}
           className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-3 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-(--primary-soft)"
         >
-          {INCIDENT_LABEL_OPTIONS.map((option) => (
+          {labelOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
