@@ -22,13 +22,13 @@ import {
 const formatDate = (isoString: string) => {
   if (!isoString) return "-";
   const date = new Date(isoString);
-  return date.toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const day = date.getDate().toString().padStart(2, "0");
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+  const h = date.getHours().toString().padStart(2, "0");
+  const m = date.getMinutes().toString().padStart(2, "0");
+  return `${day} ${month} ${year}, ${h}.${m} น.`;
 };
 
 const mapSeverity = (severity: string | null): "Low" | "Medium" | "High" | "Critical" => {

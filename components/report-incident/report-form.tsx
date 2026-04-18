@@ -44,7 +44,17 @@ export default function ReportForm() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [submittedData, setSubmittedData] = useState<any>(null);
+  const [submittedData, setSubmittedData] = useState<{
+    reportId: string;
+    incidentDate: string;
+    incidentTime: string;
+    location: string;
+    summaryText: string;
+    incidentType: string;
+    severity: string;
+    status: string;
+    addedToExisting: string;
+  } | null>(null);
 
   const handleAddPhotos = (files: FileList | null) => {
     if (!files) return;
@@ -103,7 +113,6 @@ export default function ReportForm() {
     incidentTimeMode,
     latitude,
     photos,
-    locationNote,
     longitude,
   ]);
 
@@ -129,7 +138,6 @@ export default function ReportForm() {
           : new Date(incidentAt).toISOString();
 
       const apiResponse = await submitIncidentReport({
-        userId: "64012222",
         description,
         latitude,
         longitude,
@@ -150,23 +158,18 @@ export default function ReportForm() {
       const m = incidentDateObj.getMinutes().toString().padStart(2, "0");
 
       const incidentDateStr = `${day}/${month}/${year}`;
-      const incidentTimeStr = `${h}:${m}`;
+      const incidentTimeStr = `${h}.${m} น.`;
 
       setSubmittedData({
-        reportId:
-          typeof apiResponse.reportId === "string"
-            ? apiResponse.reportId
-            : `RP-${Math.floor(100000 + Math.random() * 900000)}`,
+        reportId: apiResponse.data?.trackingCode || "TP-UNKNOWN",
         incidentDate: incidentDateStr,
         incidentTime: incidentTimeStr,
-        location: building || "Unknown location",
+        location: locationNote.trim() || building || "Unknown location",
         summaryText: description,
-        incidentType:
-          INCIDENT_LABEL_OPTIONS.find((option) => option.value === incidentLabel)
-            ?.label || incidentLabel,
+        incidentType: apiResponse.data?.candidateIncidentType || INCIDENT_LABEL_OPTIONS.find((option) => option.value === incidentLabel)?.label || incidentLabel,
         severity: "Pending Assessment",
-        status: "Processing",
-        addedToExisting: "-",
+        status: apiResponse.data?.status || "Submitted",
+        addedToExisting: apiResponse.data?.isMerged ? `Yes (${apiResponse.data?.incidentId})` : "No",
       });
 
       setIsSubmitted(true);
