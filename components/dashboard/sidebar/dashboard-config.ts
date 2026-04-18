@@ -18,4 +18,9 @@ export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
     href: "/analytics",
     icon: "chart",
   },
+  {
+    label: "Admin Center",
+    href: "/admin",
+    icon: "settings",
+  },
 ];

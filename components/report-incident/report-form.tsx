@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import DescriptionField from "./description-field";
 import PhotoUploadSection from "./photo-upload-section";
 import LocationSection from "./location-section";
@@ -10,6 +10,7 @@ import IncidentTimeSection from "./incident-time-section";
 import ReportActions from "./report-actions";
 import SubmissionSuccess from "./submission-success";
 import ConfirmSubmitModal from "./confirm-submit-modal";
+import { submitIncidentReport } from "@/services/report-incident.service";
 import type { IncidentTimeMode } from "./types";
 
 function getCurrentDatetimeLocal() {
@@ -19,6 +20,8 @@ function getCurrentDatetimeLocal() {
   return local.toISOString().slice(0, 16);
 }
 
+import { getReportOptions, getPublicLocations } from "@/services/public.service";
+
 export default function ReportForm() {
   const [description, setDescription] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
@@ -26,6 +29,35 @@ export default function ReportForm() {
   const [locationNote, setLocationNote] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [incidentLabel, setIncidentLabel] = useState("");
+  
+  const [labelOptions, setLabelOptions] = useState<{value: string, label: string}[]>([]);
+  const [buildingOptions, setBuildingOptions] = useState<{value: string, label: string}[]>([]);
+
+  useEffect(() => {
+    async function loadOptions() {
+      try {
+        const [opts, locs] = await Promise.all([
+          getReportOptions(),
+          getPublicLocations()
+        ]);
+        
+        setLabelOptions(opts.incidentLabels.map(l => ({ value: l, label: l.replace('_', ' ').toUpperCase() })));
+        setBuildingOptions(locs.map(l => ({ value: l.buildingCode, label: l.locationName })));
+        
+        if (opts.incidentLabels.length > 0) setIncidentLabel(opts.incidentLabels[0]);
+      } catch (error) {
+        console.error("Failed to load report options", error);
+        // Fallback
+        setLabelOptions([
+          { value: "trash", label: "Trash / Waste" },
+          { value: "safety", label: "Safety Hazard" },
+        ]);
+      }
+    }
+    loadOptions();
+  }, []);
+
   const [incidentTimeMode, setIncidentTimeMode] =
     useState<IncidentTimeMode>("now");
   const [incidentAt, setIncidentAt] = useState(getCurrentDatetimeLocal());
@@ -33,7 +65,19 @@ export default function ReportForm() {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [submittedData, setSubmittedData] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submittedData, setSubmittedData] = useState<{
+    reportId: string;
+    incidentDate: string;
+    incidentTime: string;
+    location: string;
+    summaryText: string;
+    incidentType: string;
+    severity: string;
+    status: string;
+    addedToExisting: string;
+  } | null>(null);
 
   const handleAddPhotos = (files: FileList | null) => {
     if (!files) return;
@@ -60,24 +104,27 @@ export default function ReportForm() {
     setLocationNote("");
     setLatitude("");
     setLongitude("");
+    setIncidentLabel("trash");
     setIncidentTimeMode("now");
     setIncidentAt(getCurrentDatetimeLocal());
     setAcknowledgeTruth(false);
+    setSubmitError("");
   };
 
   const canSubmit = useMemo(() => {
     const hasDescription = description.trim().length > 0;
     const hasBuilding = building.trim().length > 0;
-    const hasLocationReference =
-      locationNote.trim().length > 0 ||
-      (latitude.trim().length > 0 && longitude.trim().length > 0);
+    const hasCoordinates =
+      latitude.trim().length > 0 && longitude.trim().length > 0;
+    const hasPhoto = photos.length > 0;
     const hasIncidentTime =
       incidentTimeMode === "now" || incidentAt.trim().length > 0;
 
     return (
       hasDescription &&
+      hasPhoto &&
       hasBuilding &&
-      hasLocationReference &&
+      hasCoordinates &&
       hasIncidentTime &&
       acknowledgeTruth
     );
@@ -88,7 +135,7 @@ export default function ReportForm() {
     incidentAt,
     incidentTimeMode,
     latitude,
-    locationNote,
+    photos,
     longitude,
   ]);
 
@@ -97,53 +144,66 @@ export default function ReportForm() {
 
     if (!canSubmit) return;
 
+    setSubmitError("");
     setShowConfirm(true);
   };
 
-  const handleConfirmSubmit = () => {
+  const handleConfirmSubmit = async () => {
     setShowConfirm(false);
 
-    const payload = {
-      description,
-      photos,
-      building,
-      locationNote,
-      latitude,
-      longitude,
-      incidentTime:
-        incidentTimeMode === "now" ? new Date().toISOString() : incidentAt,
-      incidentTimeMode,
-      acknowledgeTruth,
-    };
+    setIsSubmitting(true);
+    setSubmitError("");
 
-    console.log("submit payload", payload);
+    try {
+      const incidentDatetime =
+        incidentTimeMode === "now"
+          ? new Date().toISOString()
+          : new Date(incidentAt).toISOString();
 
-    // Extract Date from the actual incident time that user inputted
-    const incidentDateObj = incidentTimeMode === "now" ? new Date() : new Date(incidentAt);
-    const day = incidentDateObj.getDate().toString().padStart(2, '0');
-    const month = (incidentDateObj.getMonth() + 1).toString().padStart(2, '0');
-    const year = incidentDateObj.getFullYear();
-    const h = incidentDateObj.getHours().toString().padStart(2, '0');
-    const m = incidentDateObj.getMinutes().toString().padStart(2, '0');
-    
-    // Split into specific date and time strings
-    const incidentDateStr = `${day}/${month}/${year}`;
-    const incidentTimeStr = `${h}:${m}`;
+      const selectedBuildingLabel = buildingOptions.find(opt => opt.value === building)?.label || building;
 
-    // Mock submitted data for the success screen
-    setSubmittedData({
-      reportId: `RP-${Math.floor(100000 + Math.random() * 900000)}`,
-      incidentDate: incidentDateStr,
-      incidentTime: incidentTimeStr,
-      location: building || "Unknown location",
-      summaryText: description,
-      incidentType: "Pending Classification",
-      severity: "Pending Assessment",
-      status: "Processing",
-      addedToExisting: "-",
-    });
+      const apiResponse = await submitIncidentReport({
+        description,
+        latitude,
+        longitude,
+        incidentDatetime,
+        label: incidentLabel,
+        placeName: selectedBuildingLabel,
+        locationNote: locationNote.trim(),
+        images: photos,
+      });
 
-    setIsSubmitted(true);
+      const incidentDateObj =
+        incidentTimeMode === "now" ? new Date() : new Date(incidentAt);
+      const day = incidentDateObj.getDate().toString().padStart(2, "0");
+      const month = (incidentDateObj.getMonth() + 1)
+        .toString()
+        .padStart(2, "0");
+      const year = incidentDateObj.getFullYear();
+      const h = incidentDateObj.getHours().toString().padStart(2, "0");
+      const m = incidentDateObj.getMinutes().toString().padStart(2, "0");
+
+      const incidentDateStr = `${day}/${month}/${year}`;
+      const incidentTimeStr = `${h}.${m} น.`;
+
+      setSubmittedData({
+        reportId: apiResponse.data?.trackingCode || "TP-UNKNOWN",
+        incidentDate: incidentDateStr,
+        incidentTime: incidentTimeStr,
+        location: locationNote.trim() || building || "Unknown location",
+        summaryText: description,
+        incidentType: apiResponse.data?.candidateIncidentType || labelOptions.find((option) => option.value === incidentLabel)?.label || incidentLabel,
+        severity: "Pending Assessment",
+        status: apiResponse.data?.status || "Submitted",
+        addedToExisting: apiResponse.data?.isMerged ? `Yes (${apiResponse.data?.incidentId})` : "No",
+      });
+
+      setIsSubmitted(true);
+    } catch {
+      setSubmitError("Submit failed. Please check your network or API URL and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted && submittedData) {
@@ -176,6 +236,26 @@ export default function ReportForm() {
         onAddPhotos={handleAddPhotos}
         onRemovePhoto={handleRemovePhoto}
       />
+
+      <section>
+        <label className="mb-2 block text-base font-medium text-(--color-text)">
+          Incident Label
+        </label>
+        <select
+          value={incidentLabel}
+          onChange={(e) => setIncidentLabel(e.target.value)}
+          className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-3 text-sm text-(--color-text) outline-none transition focus:border-(--color-primary) focus:ring-2 focus:ring-(--primary-soft)"
+        >
+          {labelOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <p className="mt-2 text-xs text-(--color-subtext)">
+          เลือกประเภทเหตุเบื้องต้นเพื่อให้ระบบส่งต่อหน่วยงานได้เร็วขึ้น
+        </p>
+      </section>
 
       <LocationSection
         building={building}
@@ -215,7 +295,15 @@ export default function ReportForm() {
         </div>
       </div>
 
-      <ReportActions canSubmit={canSubmit} onClear={handleClear} />
+      {submitError && (
+        <p className="text-sm text-red-600">{submitError}</p>
+      )}
+
+      <ReportActions
+        canSubmit={canSubmit}
+        isSubmitting={isSubmitting}
+        onClear={handleClear}
+      />
 
       <ConfirmSubmitModal
         isOpen={showConfirm}

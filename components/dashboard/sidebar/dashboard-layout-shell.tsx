@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { shouldShowDashboardChrome } from "@/lib/constants/navigation";
+import { StaffAuthGuard } from "./staff-auth-guard";
 import { DashboardTopbar } from "./dashboard-topbar";
 import { DashboardSidebar } from "./dashboard-sidebar";
 
@@ -19,14 +20,16 @@ export function DashboardLayoutShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-(--color-bg) text-(--color-text)">
-      <DashboardTopbar />
+    <StaffAuthGuard>
+      <div className="min-h-screen bg-(--color-bg) text-(--color-text)">
+        <DashboardTopbar />
 
-      <div className="flex">
-        <DashboardSidebar />
+        <div className="flex">
+          <DashboardSidebar />
 
-        <main className="min-h-[calc(100vh-72px)] flex-1 bg-(--color-bg)">{children}</main>
+          <main className="min-h-[calc(100vh-72px)] flex-1 bg-(--color-bg)">{children}</main>
+        </div>
       </div>
-    </div>
+    </StaffAuthGuard>
   );
 }

@@ -5,6 +5,7 @@ export interface DashboardStat {
 
 export interface IncidentRow {
   id: string;
+  code: string;
   type: string;
   severity: string;
   severityColor: string;
