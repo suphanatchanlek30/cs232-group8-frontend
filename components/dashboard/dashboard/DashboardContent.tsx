@@ -126,21 +126,35 @@ export default function DashboardContent() {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-8 w-full space-y-8 animate-in fade-in duration-500">
+      <header>
+        <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">Incident Dashboard</h1>
+        <p className="text-neutral-500 mt-1">ภาพรวมการแจ้งเหตุและการจัดการสถานะปัจจุบัน</p>
+      </header>
+
       <DashboardStats stats={stats} />
 
-      <DashboardFilters
-        statusFilters={STATUS_FILTERS}
-        extraFilters={EXTRA_FILTERS}
-        activeStatusIndex={0}
-      />
+      <div className="bg-white rounded-3xl p-2 border border-neutral-100 shadow-sm inline-flex">
+        <DashboardFilters
+          statusFilters={STATUS_FILTERS}
+          extraFilters={EXTRA_FILTERS}
+          activeStatusIndex={0}
+        />
+      </div>
 
       {loading ? (
-        <div className="py-20 text-center text-gray-500">Loading dashboard data...</div>
+        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-neutral-100 shadow-sm">
+          <div className="w-8 h-8 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mb-4" />
+          <div className="text-neutral-400 font-medium">กำลังโหลดข้อมูลแดชบอร์ด...</div>
+        </div>
       ) : (
-        <div className="grid grid-cols-12 gap-6">
-          <IncidentsTable incidents={incidents} onResolve={handleQuickResolve} />
-          <PriorityQueue items={priorityQueue} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-9">
+            <IncidentsTable incidents={incidents} onResolve={handleQuickResolve} />
+          </div>
+          <div className="lg:col-span-3">
+            <PriorityQueue items={priorityQueue} />
+          </div>
         </div>
       )}
     </div>

@@ -89,7 +89,7 @@ export default function IncidentDetailPage() {
   if (!incident) return <div className="p-8 text-center text-neutral-500">Incident not found</div>;
 
   return (
-    <div className="p-6 lg:p-8 max-w-[1400px] mx-auto space-y-8 pb-20">
+    <div className="p-6 lg:p-8 w-full space-y-8 pb-20">
       {/* Header & Back Button */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-neutral-100 pb-8">
         <div>
