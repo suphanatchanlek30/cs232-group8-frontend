@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,8 +28,10 @@ export default function RootLayout({
       className={`${inter.className} h-full antialiased`}
     >
       <body className="min-h-screen bg-white text-black">
-        <main>{children}</main>
-        <Navbar />
+        <AuthProvider>
+          <main>{children}</main>
+          <Navbar />
+        </AuthProvider>
       </body>
     </html>
   );
