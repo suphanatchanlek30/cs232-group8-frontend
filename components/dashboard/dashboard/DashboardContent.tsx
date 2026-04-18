@@ -9,7 +9,7 @@ import { DashboardFilters } from './dashboard-filters';
 import { DashboardStats } from './dashboard-stats';
 import { IncidentsTable } from './incidents-table';
 import { PriorityQueue } from './priority-queue';
-import { getDashboardSummary, getIncidents } from '@/services/dashboard.service';
+import { getDashboardSummary, getIncidents, resolveIncident } from '@/services/dashboard.service';
 import type { DashboardStat, IncidentRow, PriorityIncident } from './types';
 
 // Map API Severity to Color
@@ -105,6 +105,23 @@ export default function DashboardContent() {
     }
   };
 
+  const handleQuickResolve = async (id: string) => {
+    const summary = window.prompt("กรุณาระบุสรุปการแก้ไขเหตุการณ์ (Resolution Summary):", "ดำเนินการแก้ไขเรียบร้อยแล้ว");
+    if (summary === null) return; 
+
+    try {
+      setLoading(true);
+      await resolveIncident(id, summary);
+      alert("ปิดงานสำเร็จ!");
+      fetchData(); 
+    } catch (error) {
+      console.error("Failed to resolve incident:", error);
+      alert("เกิดข้อผิดพลาดในการปิดงาน");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <DashboardStats stats={stats} />
@@ -119,7 +136,7 @@ export default function DashboardContent() {
         <div className="py-20 text-center text-gray-500">Loading dashboard data...</div>
       ) : (
         <div className="grid grid-cols-12 gap-6">
-          <IncidentsTable incidents={incidents} />
+          <IncidentsTable incidents={incidents} onResolve={handleQuickResolve} />
           <PriorityQueue items={priorityQueue} />
         </div>
       )}

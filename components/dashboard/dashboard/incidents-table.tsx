@@ -3,9 +3,10 @@ import type { IncidentRow } from './types';
 
 interface IncidentsTableProps {
   incidents: IncidentRow[];
+  onResolve: (id: string) => void;
 }
 
-export function IncidentsTable({ incidents }: IncidentsTableProps) {
+export function IncidentsTable({ incidents, onResolve }: IncidentsTableProps) {
   return (
     <div className="col-span-12 bg-white p-6 rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-neutral-100 overflow-x-auto lg:col-span-9">
       <h3 className="font-semibold mb-6 text-neutral-800 text-sm tracking-wide">ALL INCIDENTS</h3>
@@ -56,7 +57,12 @@ export function IncidentsTable({ incidents }: IncidentsTableProps) {
                   >
                     View
                   </Link>
-                  <button type="button" className="px-3 py-1 text-xs font-medium text-white bg-neutral-800 hover:bg-neutral-900 rounded-md transition-colors">
+                  <button 
+                    onClick={() => onResolve(incident.id)}
+                    type="button" 
+                    className="px-3 py-1 text-xs font-medium text-white bg-neutral-800 hover:bg-black rounded-md transition-colors active:scale-95"
+                    disabled={incident.status === 'Resolved'}
+                  >
                     Resolve
                   </button>
                 </div>
