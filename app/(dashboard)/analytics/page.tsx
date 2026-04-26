@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { KPIStats } from '@/components/analytics/KPIStats';
 import { DistributionChart } from '@/components/analytics/DistributionChart';
-import { StatusOverview } from '@/components/analytics/statusoverview';
+import { StatusOverview } from '@/components/analytics/StatusOverview';
 import { PeakTimeChart } from '@/components/analytics/PeakTimeChart';
 import { HotspotList } from '@/components/analytics/HotspotList';
 import { FusionStats } from '@/components/analytics/FusionStats';
