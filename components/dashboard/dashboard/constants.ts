@@ -11,6 +11,7 @@ export const DASHBOARD_STATS: DashboardStat[] = [
 export const INCIDENTS: IncidentRow[] = [
   {
     id: '#INC-0005',
+    code: '#INC-0005',
     type: 'Water Leak/Flooding SC',
     severity: 'MEDIUM',
     severityColor: 'text-yellow-600',
@@ -22,6 +23,7 @@ export const INCIDENTS: IncidentRow[] = [
   },
   {
     id: '#INC-0004',
+    code: '#INC-0004',
     type: 'Garbage/Sanitation',
     severity: 'LOW',
     severityColor: 'text-gray-600',
@@ -33,6 +35,7 @@ export const INCIDENTS: IncidentRow[] = [
   },
   {
     id: '#INC-0003',
+    code: '#INC-0003',
     type: 'Fire/Smoke',
     severity: 'HIGH',
     severityColor: 'text-red-600',
@@ -44,6 +47,7 @@ export const INCIDENTS: IncidentRow[] = [
   },
   {
     id: '#INC-0002',
+    code: '#INC-0002',
     type: 'Electrical Issue',
     severity: 'HIGH',
     severityColor: 'text-red-600',
@@ -55,6 +59,7 @@ export const INCIDENTS: IncidentRow[] = [
   },
   {
     id: '#INC-0001',
+    code: '#INC-0001',
     type: 'Facility Damage',
     severity: 'MEDIUM',
     severityColor: 'text-yellow-600',

@@ -29,6 +29,23 @@ export interface RoutingRuleItem {
   isActive: boolean;
 }
 
+export interface LocationItem {
+  locationId: string;
+  locationName: string;
+  buildingCode: string;
+  lat: number;
+  lng: number;
+}
+
+export interface StaffUserItem {
+  staffUserId: string;
+  fullName: string;
+  email: string;
+  unitId?: string;
+  role: "STAFF" | "ADMIN";
+  isActive?: boolean;
+}
+
 // ----------------------------------------------------------- UNITS
 export const getAdminUnits = async (page = 1, pageSize = 20) => {
   const response = await staffApiClient.get<{ success: boolean; message: string; data: PaginatedUnits }>(
@@ -48,7 +65,7 @@ export const createUnit = async (payload: { name: string; code: string; email: s
 
 // ----------------------------------------------------------- LOCATIONS
 export const createLocation = async (payload: { locationName: string; lat: number; lng: number; buildingCode: string }) => {
-  const response = await staffApiClient.post<{ success: boolean; message: string; data: any }>(
+  const response = await staffApiClient.post<{ success: boolean; message: string; data: LocationItem }>(
     "/admin/locations",
     payload
   );
@@ -79,7 +96,7 @@ export const createStaffUser = async (payload: {
   unitId?: string; 
   role: "STAFF" | "ADMIN" 
 }) => {
-  const response = await staffApiClient.post<{ success: boolean; message: string; data: any }>(
+  const response = await staffApiClient.post<{ success: boolean; message: string; data: StaffUserItem }>(
     "/admin/staff-users",
     payload
   );

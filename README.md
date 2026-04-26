@@ -75,3 +75,20 @@ npm run build
 - 1 PR = 1 เรื่องหลัก (รีวิวง่าย)
 - ชื่อ branch ให้ชัด: `feat/...`, `fix/...`, `chore/...`
 - commit message ใช้รูปแบบ: `feat: ...`, `fix: ...`, `chore: ...`
+
+## 6) Deploy Frontend ไป Vercel
+ตั้งค่า Environment Variables ใน Vercel ตามนี้
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://your-backend-api.example.com
+NEXT_PUBLIC_LIFF_ID=your-liff-id
+```
+
+- `NEXT_PUBLIC_API_BASE_URL` = URL ของ backend ที่ frontend จะเรียกผ่าน browser
+- `NEXT_PUBLIC_LIFF_ID` = LIFF ID สำหรับ auth/reporter flow
+
+สิ่งที่ต้องเช็กเพิ่มก่อน deploy
+
+- Backend ต้องเปิด CORS ให้โดเมนของ Vercel เช่น `https://your-project.vercel.app`
+- ถ้าใช้ custom domain ให้เพิ่ม domain นั้นใน CORS ด้วย
+- ถ้า LIFF จำกัด callback/origin ให้เพิ่มโดเมน Vercel หรือ custom domain ใน LINE Developers Console
