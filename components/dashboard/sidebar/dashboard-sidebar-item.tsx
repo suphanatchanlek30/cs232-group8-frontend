@@ -4,13 +4,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getDashboardIcon } from "./dashboard-icons";
+import { DASHBOARD_ICON_MAP } from "./dashboard-icons";
 import type { DashboardNavItem } from "./types";
 
 export function DashboardSidebarItem({ item }: { item: DashboardNavItem }) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
-  const Icon = getDashboardIcon(item.icon);
+  const iconKey = item.icon;
 
   return (
     <Link
@@ -25,7 +25,10 @@ export function DashboardSidebarItem({ item }: { item: DashboardNavItem }) {
         <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-(--color-primary)" />
       )}
 
-      <Icon className="h-4 w-4" strokeWidth={2} />
+      {(() => {
+        const Icon = DASHBOARD_ICON_MAP[iconKey];
+        return <Icon className="h-4 w-4" strokeWidth={2} />;
+      })()}
       <span>{item.label}</span>
     </Link>
   );

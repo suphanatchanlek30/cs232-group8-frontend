@@ -39,7 +39,7 @@ export interface ReportDetail {
   detectedLabels: string[];
   candidateIncidentType: string | null;
   linkedIncidentId: string | null;
-  attachments: any[];
+  attachments: { fileUrl: string }[];
   submittedAt: string;
 }
 
