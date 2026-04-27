@@ -3,28 +3,43 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import AuthInput from "./auth-input";
+import { loginStaff } from "@/services/auth/staff-auth.service";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const canSubmit = useMemo(() => {
-    return email.trim().length > 0 && password.trim().length > 0;
-  }, [email, password]);
+    return email.trim().length > 0 && password.trim().length > 0 && !loading;
+  }, [email, password, loading]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!canSubmit) return;
 
-    const payload = {
-      email,
-      password,
-    };
-
-    console.log("staff login payload", payload);
-    alert("Login form submit ready");
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const user = await loginStaff(email, password);
+      
+      console.log("Logged in successfully:", user);
+      
+      // Redirect to dashboard on success
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      console.error("Login failed:", err);
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Invalid credentials or login failed.";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,6 +48,12 @@ export default function LoginForm() {
         <div className="mb-10 text-center">
           <h2 className="text-4xl font-bold text-(--color-text)">Login</h2>
         </div>
+
+        {error && (
+          <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-600 border border-red-200">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <AuthInput
@@ -60,7 +81,7 @@ export default function LoginForm() {
                 : "cursor-not-allowed bg-neutral-300"
             }`}
           >
-            Log in
+            {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
       </div>

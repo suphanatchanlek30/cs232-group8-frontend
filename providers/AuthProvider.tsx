@@ -70,7 +70,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-
       if (liff.isLoggedIn()) {
         try {
           const idToken = liff.getIDToken();
