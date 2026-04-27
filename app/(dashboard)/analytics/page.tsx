@@ -11,17 +11,22 @@ import dynamic from 'next/dynamic';
 
 const LeafletMap = dynamic(
   () => import('@/components/analytics/LeafletMap'),
-  { 
-    ssr: false, 
-    loading: () => <div className="w-full h-full flex items-center justify-center bg-neutral-100 rounded-xl text-xs text-neutral-400">Loading WebGL Map...</div> 
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center bg-neutral-100 rounded-xl text-xs text-neutral-400">
+        Loading map data...
+      </div>
+    )
   }
 );
-import { 
-  getKPISummary, 
-  getTypeDistribution, 
-  getHotspots, 
-  getPeakTimeAnalysis, 
-  getFusionStatistics, 
+
+import {
+  getKPISummary,
+  getTypeDistribution,
+  getHotspots,
+  getPeakTimeAnalysis,
+  getFusionStatistics,
   getStatusOverview,
   KPISummary,
   TypeDistribution,
@@ -44,7 +49,9 @@ export default function AnalyticsPage() {
     async function loadData() {
       try {
         setLoading(true);
-        const [kpiData, distData, hostspotData, peakData, fusionData, statusOverview] = await Promise.all([
+
+        // Fetch all analytics data in parallel for better performance
+        const [kpiData, distData, hotspotData, peakData, fusionData, statusOverview] = await Promise.all([
           getKPISummary(),
           getTypeDistribution(),
           getHotspots({ limit: 5 }),
@@ -55,7 +62,7 @@ export default function AnalyticsPage() {
 
         setKpi(kpiData);
         setDistribution(distData);
-        setHotspots(hostspotData);
+        setHotspots(hotspotData);
         setPeakTime(peakData);
         setFusion(fusionData);
         setStatusData(statusOverview);
@@ -72,7 +79,9 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-[80vh]">
-        <div className="text-neutral-400 animate-pulse font-medium">Analyzing TU Pulse data...</div>
+        <div className="text-neutral-400 animate-pulse font-medium">
+          Analyzing TU Pulse data...
+        </div>
       </div>
     );
   }
@@ -81,11 +90,13 @@ export default function AnalyticsPage() {
     <div className="p-8 bg-neutral-50 min-h-screen">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-neutral-800">Intelligence Analytics</h1>
-        <p className="text-neutral-500 text-sm">System performance and incident distribution overview</p>
+        <p className="text-neutral-500 text-sm">
+          System performance and incident distribution overview
+        </p>
       </div>
 
       {kpi && (
-        <KPIStats 
+        <KPIStats
           totalReports={kpi.totalReports}
           totalIncidents={kpi.totalIncidents}
           fusionRate={kpi.fusionRate}
@@ -111,10 +122,12 @@ export default function AnalyticsPage() {
           <HotspotList hotspots={hotspots} />
         </div>
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-neutral-100">
-           <h3 className="text-sm font-semibold text-neutral-800 uppercase tracking-wider mb-6">Spatial Intelligence Map</h3>
-           <div className="w-full h-[300px] bg-neutral-100 rounded-xl flex items-center justify-center relative overflow-hidden">
-              <LeafletMap hotspots={hotspots} />
-           </div>
+          <h3 className="text-sm font-semibold text-neutral-800 uppercase tracking-wider mb-6">
+            Spatial Intelligence Map
+          </h3>
+          <div className="w-full h-[300px] bg-neutral-100 rounded-xl flex items-center justify-center relative overflow-hidden">
+            <LeafletMap hotspots={hotspots} />
+          </div>
         </div>
       </div>
     </div>
