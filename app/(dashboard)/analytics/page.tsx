@@ -7,6 +7,7 @@ import { StatusOverview } from '@/components/analytics/StatusOverview';
 import { PeakTimeChart } from '@/components/analytics/PeakTimeChart';
 import { HotspotList } from '@/components/analytics/HotspotList';
 import { FusionStats } from '@/components/analytics/FusionStats';
+import { SpatialMap } from '@/components/analytics/SpatialMap';
 import { 
   getKPISummary, 
   getTypeDistribution, 
@@ -103,14 +104,7 @@ export default function AnalyticsPage() {
         </div>
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-neutral-100">
            <h3 className="text-sm font-semibold text-neutral-800 uppercase tracking-wider mb-6">Spatial Intelligence Map</h3>
-           <div className="w-full h-[300px] bg-neutral-100 rounded-xl flex items-center justify-center overflow-hidden relative">
-              {/* Map Placeholder with visual cues */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#4f46e5_1px,transparent_1px)] bg-size-[20px_20px]" />
-              <div className="text-neutral-400 text-xs text-center z-10">
-                <p className="font-bold mb-1">GEOSPATIAL CLUSTERING ACTIVE</p>
-                <p>Interactive Map Module — Analyzing {hotspots.length} major hotspots</p>
-              </div>
-           </div>
+           <SpatialMap hotspots={hotspots} />
         </div>
       </div>
     </div>
