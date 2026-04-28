@@ -186,3 +186,11 @@ export const addIncidentComment = async (incidentId: string, comment: string) =>
   return response.data.data;
 };
 
+export const notifyUnit = async (unitName: string) => {
+  const response = await staffApiClient.post<{ success: boolean; message: string }>(
+    `/notifications/notify-unit`,
+    { unitName }
+  );
+  return response.data;
+};
+

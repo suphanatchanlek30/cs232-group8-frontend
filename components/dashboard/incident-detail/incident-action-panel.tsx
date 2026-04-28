@@ -5,6 +5,7 @@ import {
   updateIncidentStatus, 
   assignIncidentUnit, 
   resolveIncident,
+  notifyUnit,
   getDashboardMetadata,
   DashboardMetadata
 } from '@/services/dashboard.service';
@@ -51,6 +52,18 @@ export function IncidentActionPanel({
     try {
       setLoading(true);
       await updateIncidentStatus(incidentId, status, note);
+
+      if (unitId) {
+        const selectedUnit = metadata?.units.find((u) => u.unitId === unitId);
+        if (selectedUnit) {
+          try {
+            await notifyUnit(selectedUnit.name);
+          } catch (notifyError) {
+            console.error('Failed to notify unit:', notifyError);
+          }
+        }
+      }
+
       onUpdate();
       setNote('');
     } catch (error) {
