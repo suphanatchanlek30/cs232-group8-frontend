@@ -30,8 +30,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function initAuth() {
       try {
-        const liffId = process.env.NEXT_PUBLIC_LIFF_ID || "YOUR_LIFF_ID_HERE";
-        await liff.init({ liffId });
+        if (process.env.NEXT_PUBLIC_USE_MOCK_LIFF === "true") {
+          console.log("Mock Mode: Skipping LIFF init...");
+        } else {
+          const liffId = process.env.NEXT_PUBLIC_LIFF_ID || "YOUR_LIFF_ID_HERE";
+          await liff.init({ liffId });
+        }
 
         const token = getReporterAccessToken();
         if (token) {
@@ -53,6 +57,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     async function handleLiffAuth() {
+      if (process.env.NEXT_PUBLIC_USE_MOCK_LIFF === "true") {
+        try {
+          const payload = await exchangeLiffToken({
+            idToken: "mock-line-token-student001",
+            displayName: "Mock Testing User",
+            pictureUrl: "https://ui-avatars.com/api/?name=Mock+User",
+          });
+          if (isMounted) setUser(payload.user);
+        } catch (err) {
+          console.error("Failed to exchange mock LIFF token", err);
+        }
+        return;
+      }
       if (liff.isLoggedIn()) {
         try {
           const idToken = liff.getIDToken();
@@ -79,6 +96,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = () => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK_LIFF === "true") {
+      window.location.reload();
+      return;
+    }
     if (!liff.isLoggedIn()) {
       liff.login();
     }
