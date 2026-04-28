@@ -50,24 +50,54 @@ export function RelatedReportsList({ reports }: { reports: Report[] }) {
   );
 }
 
-export function EvidenceGallery({ images }: { images: string[] }) {
-  if (!images || images.length === 0) return null;
+export function EvidenceGallery({
+  images,
+  loading = false,
+  error = null,
+}: {
+  images: string[];
+  loading?: boolean;
+  error?: string | null;
+}) {
+  const hasImages = images && images.length > 0;
 
   return (
     <div className="space-y-4">
       <h3 className="font-semibold text-neutral-800 text-sm tracking-wide uppercase flex items-center gap-2 mb-4">
         <ImageIcon className="w-4 h-4 text-indigo-600" />
-        Evidence Gallery
+        Evidence Gallery {hasImages ? `(${images.length})` : ''}
       </h3>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {images.map((img, idx) => (
-          <div key={idx} className="aspect-square rounded-2xl overflow-hidden border border-neutral-100 shadow-sm hover:ring-2 hover:ring-indigo-500/20 transition-all cursor-pointer">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img} alt="Evidence" className="w-full h-full object-cover" />
-          </div>
-        ))}
-      </div>
+      {loading && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div key={idx} className="aspect-square rounded-2xl border border-neutral-100 bg-neutral-100/60 animate-pulse" />
+          ))}
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && !hasImages && (
+        <div className="rounded-2xl border border-neutral-100 bg-neutral-50 px-4 py-5 text-sm text-neutral-500">
+          ยังไม่มีรูปภาพในรายงานนี้
+        </div>
+      )}
+
+      {!loading && hasImages && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {images.map((img, idx) => (
+            <div key={`${img}-${idx}`} className="aspect-square rounded-2xl overflow-hidden border border-neutral-100 shadow-sm hover:ring-2 hover:ring-indigo-500/20 transition-all cursor-pointer">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img} alt={`Evidence ${idx + 1}`} className="w-full h-full object-cover" />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

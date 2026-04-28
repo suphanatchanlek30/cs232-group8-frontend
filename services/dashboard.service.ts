@@ -118,6 +118,13 @@ export interface TimelineEntry {
   changedAt: string;
 }
 
+export const getReportImages = async (reportId: string) => {
+  const response = await staffApiClient.get<{ success: boolean; message: string; data: string[] }>(
+    `/reports/${reportId}/images`
+  );
+  return response.data.data;
+};
+
 export const getIncidentTimeline = async (incidentId: string) => {
   const response = await staffApiClient.get<{ success: boolean; message: string; data: { timeline: TimelineEntry[] } }>(
     `/incidents/${incidentId}/timeline`

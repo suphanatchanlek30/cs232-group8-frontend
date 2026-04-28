@@ -9,6 +9,7 @@ import {
   getFusionExplanation, 
   getScoringExplanation,
   getIncidentReports,
+  getReportImages,
   getDashboardMetadata,
   IncidentItem,
   TimelineEntry,
@@ -43,6 +44,9 @@ export default function IncidentDetailPage() {
   const [fusion, setFusion] = useState<FusionData | null>(null);
   const [scoring, setScoring] = useState<ScoringData | null>(null);
   const [reports, setReports] = useState<{ reportId: string; trackingCode: string; reportText: string; submittedAt?: string; createdAt: string; attachments?: { fileUrl: string }[] }[]>([]);
+  const [evidenceImages, setEvidenceImages] = useState<string[]>([]);
+  const [evidenceLoading, setEvidenceLoading] = useState(false);
+  const [evidenceError, setEvidenceError] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<DashboardMetadata | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -67,6 +71,29 @@ export default function IncidentDetailPage() {
       setScoring(sc);
       setReports(rpt.items);
       setMetadata(meta);
+
+      if (rpt.items.length > 0) {
+        setEvidenceLoading(true);
+        setEvidenceError(null);
+
+        try {
+          const imageGroups = await Promise.all(
+            rpt.items.map((report) => getReportImages(report.reportId))
+          );
+
+          const uniqueImages = Array.from(new Set(imageGroups.flat().filter(Boolean)));
+          setEvidenceImages(uniqueImages);
+        } catch (imageError) {
+          console.error('Failed to load report images:', imageError);
+          setEvidenceError('ไม่สามารถดึงรูปภาพหลักฐานได้');
+          setEvidenceImages([]);
+        } finally {
+          setEvidenceLoading(false);
+        }
+      } else {
+        setEvidenceImages([]);
+        setEvidenceError(null);
+      }
     } catch (error) {
       console.error("Failed to load incident data:", error);
     } finally {
@@ -196,7 +223,15 @@ export default function IncidentDetailPage() {
           <RelatedReportsList reports={reports} />
 
           {/* Evidence Grid */}
-          <EvidenceGallery images={reports.flatMap(r => r.attachments || []).map(a => a.fileUrl)} />
+          <EvidenceGallery
+            images={
+              evidenceImages.length > 0
+                ? evidenceImages
+                : reports.flatMap((r) => r.attachments || []).map((a) => a.fileUrl)
+            }
+            loading={evidenceLoading}
+            error={evidenceError}
+          />
         </div>
 
         {/* Sidebar */}
