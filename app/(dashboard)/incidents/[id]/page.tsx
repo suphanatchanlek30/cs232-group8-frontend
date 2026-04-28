@@ -77,12 +77,21 @@ export default function IncidentDetailPage() {
         setEvidenceError(null);
 
         try {
-          const imageGroups = await Promise.all(
+          const imageGroups = await Promise.allSettled(
             rpt.items.map((report) => getReportImages(report.reportId))
           );
 
-          const uniqueImages = Array.from(new Set(imageGroups.flat().filter(Boolean)));
+          const successfulGroups = imageGroups
+            .filter((result): result is PromiseFulfilledResult<string[]> => result.status === 'fulfilled')
+            .map((result) => result.value);
+          const failedCount = imageGroups.length - successfulGroups.length;
+          const uniqueImages = Array.from(new Set(successfulGroups.flat().filter(Boolean)));
+
           setEvidenceImages(uniqueImages);
+
+          if (failedCount > 0) {
+            setEvidenceError(`โหลดรูปภาพได้บางส่วน (ไม่สำเร็จ ${failedCount} รายงาน)`);
+          }
         } catch (imageError) {
           console.error('Failed to load report images:', imageError);
           setEvidenceError('ไม่สามารถดึงรูปภาพหลักฐานได้');
@@ -91,6 +100,7 @@ export default function IncidentDetailPage() {
           setEvidenceLoading(false);
         }
       } else {
+        setEvidenceLoading(false);
         setEvidenceImages([]);
         setEvidenceError(null);
       }
